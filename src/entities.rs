@@ -1,3 +1,6 @@
+use std::fmt;
+
+#[derive(Debug)]
 pub enum EventStatus {
     Tentative,
     Confirmed,
@@ -27,6 +30,7 @@ pub struct Organizer {
 
 // NOTE Attendee and organizer params are all optional.
 // Need to make the structs reflect that or add default vals.
+#[derive(Debug)]
 pub struct Attendee {
     cutype: String,
     member: String,
@@ -42,11 +46,12 @@ pub struct Attendee {
     other: Vec<String>,
 }
 
+#[derive(Debug)]
 pub struct Event {
     start: String,
     end: String,
     organizer: String,
-    attendees: Vec<String>, //TODO better struct
+    attendees: Vec<Attendee>,
     created: String,
     description: String,
     location: String,
@@ -55,30 +60,42 @@ pub struct Event {
     summary: String,
 }
 
+#[derive(Debug)]
 pub struct Property {
-    name: String,
-    params: Option<Vec<(String, Vec<String>)>>,
-    value: Option<String>,
+    pub name: String,
+    pub value: Option<String>,
+    pub params: Option<Vec<String>>,
 }
 
+#[derive(Debug)]
 pub struct IcalObject {
     pub properties: Vec<Property>,
-    pub events: Vec<Event>,
+    pub events: Option<Event>,
     pub timezones: Vec<Property>,
+    pub todos: Option<String>, // TODO implement todos ;)
+    pub journals: Option<String>,
 }
 
 impl IcalObject {
     pub fn new() -> IcalObject {
         IcalObject {
             properties: Vec::new(),
-            events: Vec::new(),
+            events: None,
             timezones: Vec::new(),
+            journals: None,
+            todos: None,
         }
     }
     pub fn add_property(&mut self, prop: Property) {
         &self.properties.push(prop);
     }
     pub fn add_event(&mut self, event: Event) {
-        &self.events.push(event);
+        self.events = Some(event);
     }
 }
+
+// impl fmt::Debug for IcalObject {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         write!(f, "{:?}", self.properties);
+//     }
+// }
